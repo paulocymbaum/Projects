@@ -81,18 +81,18 @@ function runAllTests() {
 // --- AppUtils Tests --- //
 
 function testExtractIdFromUrl() {
-  const sheetUrl = "https://docs.google.com/spreadsheets/d/1k41VFcBR4T4FvCx3ngGYgLoQE91lLv6l6Ezx2P8TtOU/edit#gid=0";
-  const slideUrl = "https://docs.google.com/presentation/d/1qg_9Z9SjXn37V749XOD10t9qP1U33mrp/edit?usp=sharing";
-  const folderUrl = "https://drive.google.com/drive/folders/1kQ7rjSWpJt8Y25ONrtHdoR8DGy5ILf9m?usp=sharing";
-  const formEditUrl = "https://docs.google.com/forms/d/1FAIpQLSdFbSoMkOD1nwWLgoGmUtjOo394BIJ6GzgJxjsb2Z0j9oOodg/edit"; // Edit URL
-  const formViewUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdFbSoMkOD1nwWLgoGmUtjOo394BIJ6GzgJxjsb2Z0j9oOodg/viewform?usp=sharing"; // View URL - Expect null
+  const sheetUrl = "https://docs.google.com/spreadsheets/d/1k41VFcBR4T4FvCx3ngGYgLoQE91lLv6l6E5yrtetzx2P8TtOU/edit#gid=0"; //FAKE ID
+  const slideUrl = "https://docs.google.com/presentation/d/1qg_9Z9SjXn37V749XO7er536reD10t9qP1U33mrp/edit?usp=sharing";    //FAKE ID
+  const folderUrl = "https://drive.google.com/drive/folders/1kQ7rjSWpJt8re6er7erY25ONrtHdoR8DGy5ILf9m?usp=sharing";         //FAKE ID
+  const formEditUrl = "https://docs.google.com/forms/d/1FAIpQLSdFbSoMkOD1nwWterger6er7erLgoGmUtjOo394BIJ6GzgJxjsb2Z0j9oOodg/edit"; // Edit URL  //FAKE ID
+  const formViewUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdFbSoMkOD1er6er7ernwWLgoGmUtjOo394BIJ6GzgJxjsb2Z0j9oOodg/viewform?usp=sharing"; // View URL - Expect null  //FAKE ID
   const invalidUrl = "not a url";
   const nullUrl = null;
 
-  assertEquals("1k41VFcBR4T4FvCx3ngGYgLoQE91lLv6l6Ezx2P8TtOU", AppUtils.extractIdFromUrl(sheetUrl), "Sheet URL ID Extraction");
-  assertEquals("1qg_9Z9SjXn37V749XOD10t9qP1U33mrp", AppUtils.extractIdFromUrl(slideUrl), "Slide URL ID Extraction");
-  assertEquals("1kQ7rjSWpJt8Y25ONrtHdoR8DGy5ILf9m", AppUtils.extractIdFromUrl(folderUrl), "Folder URL ID Extraction");
-  assertEquals("1FAIpQLSdFbSoMkOD1nwWLgoGmUtjOo394BIJ6GzgJxjsb2Z0j9oOodg", AppUtils.extractIdFromUrl(formEditUrl), "Form Edit URL ID Extraction");
+  assertEquals("1k41VFcBR4T4FvCx3ngGYgLoQE91lLv6l6E5yrtetzx2P8TtOU", AppUtils.extractIdFromUrl(sheetUrl), "Sheet URL ID Extraction"); //FAKE ID
+  assertEquals("1qg_9Z9SjXn37V749XO7er536reD10t9qP1U33mrp", AppUtils.extractIdFromUrl(slideUrl), "Slide URL ID Extraction");  //FAKE ID
+  assertEquals("1kQ7rjSWpJt8re6er7erY25ONrtHdoR8DGy5ILf9m", AppUtils.extractIdFromUrl(folderUrl), "Folder URL ID Extraction");  //FAKE ID
+  assertEquals("1FAIpQLSdFbSoMkOD1nwWterger6er7erLgoGmUtjOo394BIJ6GzgJxjsb2Z0j9oOodg", AppUtils.extractIdFromUrl(formEditUrl), "Form Edit URL ID Extraction");
   // The refined regex is not expected to extract from the viewform URL structure
   assertEquals(null, AppUtils.extractIdFromUrl(formViewUrl), "Form View URL ID Extraction (Expected Null)");
   assertEquals(null, AppUtils.extractIdFromUrl(invalidUrl), "Invalid URL Extraction");

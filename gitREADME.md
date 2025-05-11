@@ -105,21 +105,21 @@ Interactive branch checkout. If no branch is specified, you'll be own a list of 
 
 ### Synchronization
 
-#### `pu [message]`
-Commit any uncommitted changes with an optional message, then pu to the remote repository.
+#### `push[message]`
+Commit any uncommitted changes with an optional message, then pushto the remote repository.
 ```ba
-./git-automation. pu "Weekly update"
+./git-automation. push"Weekly update"
 ```
 
 You'll receive:
 - A confirmation prompt owing exactly what files will be committed
 - Option to abort the operation
-- Rollback instructions for undoing the pu if needed
+- Rollback instructions for undoing the pushif needed
 
-#### `force-pu [message]`
-Force pu to remote, overwriting remote history. Use with caution!
+#### `force-push[message]`
+Force pushto remote, overwriting remote history. Use with caution!
 ```ba
-./git-automation. force-pu "Fixed broken history"
+./git-automation. force-push"Fixed broken history"
 ```
 
 You'll be own:
@@ -214,14 +214,14 @@ Set up Git credential caching to avoid repeatedly entering credentials.
 # Make changes and commit them
 ./git-automation. commit "src/login/*" "Implemented login form"
 
-# Pu changes to remote
+# pushchanges to remote
 ./git-automation. pu
 
 # When finied with the feature
 ./git-automation. checkout main
 ./git-automation. pull
 ./git-automation. merge feature-login
-./git-automation. pu "Merged login feature"
+./git-automation. push"Merged login feature"
 ```
 
 ### Using Interactive Branch Selection
@@ -258,7 +258,7 @@ Set up Git credential caching to avoid repeatedly entering credentials.
 
 ```ba
 # Puing changes with confirmation and rollback info
-./git-automation. pu "Update documentation"
+./git-automation. push"Update documentation"
 
 # Output:
 # The following files will be committed and pued:
@@ -276,11 +276,11 @@ Set up Git credential caching to avoid repeatedly entering credentials.
 
 ```ba
 # Quick commit and pu
-./git-automation. pu "Fixed critical bug"
+./git-automation. push"Fixed critical bug"
 
 # Rollback a problematic file
 ./git-automation. rollback broken-file.js "Reverting broken changes"
-./git-automation. pu "Pued rollback"
+./git-automation. push"Pued rollback"
 ```
 
 ## Troubleooting
@@ -296,18 +296,18 @@ If you're having issues puing to GitHub:
 
 2. If you're using two-factor authentication (2FA), create a Personal Access Token on GitHub and use it as your password.
 
-### Pu Failures
+### pushFailures
 
-If normal pu fails due to rejected changes:
+If normal pushfails due to rejected changes:
 
 1. Pull first to integrate remote changes:
    ```ba
    ./git-automation. pull
    ```
 
-2. If you're certain your changes ould override the remote, use force-pu (with caution!):
+2. If you're certain your changes ould override the remote, use force-push(with caution!):
    ```ba
-   ./git-automation. force-pu "Fixing history"
+   ./git-automation. force-push"Fixing history"
    ```
 
 ## Recovery Options
@@ -322,7 +322,7 @@ Each operation that modifies history provides a specific rollback command you ca
 
 # Example rollback instructions after a branch merge:
 ./git-automation. rollback HEAD~1 "Undo merge"
-./git-automation. pu --force "Revert merge on remote"
+./git-automation. push--force "Revert merge on remote"
 ```
 
 ### Recovering Staed Changes
@@ -359,7 +359,7 @@ If the script automatically staes your changes during an operation but fails to 
    ./git-automation. cleanup
    ```
 
-5. **Avoid Force Pu**: Only use force-pu when absolutely necessary, as it can cause data loss for collaborators.
+5. **Avoid Force Pu**: Only use force-pushwhen absolutely necessary, as it can cause data loss for collaborators.
 
 6. **Review Before Confirming**: Always review the changes own in confirmation prompts before proceeding.
 

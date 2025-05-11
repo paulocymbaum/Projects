@@ -28,20 +28,20 @@ print_usage() {
     echo ""
     echo "Commands:"
     echo "  commit [file/pattern] [message]    Commit specified file(s) with message"
-    echo "  pu [message]                     Commit any changes, then pu to remote repository"
+    echo "  push [message]                     Commit any changes, then push to remote repository"
     echo "  branch [name] [base_branch]        Create and checkout a new branch"
     echo "  rollback [file/commit] [message]   Rollback a file or to a specific commit, then commit"
-    echo "  status                             ow the repository status"
-    echo "  help                               ow this help message"
+    echo "  status                             Show the repository status"
+    echo "  help                               Show this help message"
     echo "  pull                               Pull changes from remote repository"
     echo "  merge [branch]                     Merge specified branch into current branch"
     echo "  tag [name] [message]               Create a new tag with optional message"
-    echo "  sta [save|pop|list]              Manage git staes"
-    echo "  log [options]                      ow commit logs with enhanced formatting"
+    echo "  sta [save|pop|list]                Manage git stashes"
+    echo "  log [options]                      Show commit logs with enhanced formatting"
     echo "  cleanup                            Clean up merged branches and optimize repository"
     echo "  init                               Initialize repository and set remote to your portfolio"
-    echo "  auth                               Set up Git credentials for puing"
-    echo "  force-pu [message]               Force pu to remote (use with caution)"
+    echo "  auth                               Set up Git credentials for pushing"
+    echo "  force-push [message]               Force push to remote (use with caution)"
     echo "  set-repo [url]                     Update the repository URL"
     echo "  checkout [branch]                  Checkout or interactively select a branch"
 }
@@ -59,7 +59,7 @@ provide_rollback_hint() {
             ;;
         "merge")
             echo -e "${BLUE}./git-automation. rollback HEAD~1 \"Undo merge with $target\"${NC}"
-            echo -e "${BLUE}./git-automation. force-pu \"Revert merge on remote\"${NC}"
+            echo -e "${BLUE}./git-automation. force-push \"Revert merge on remote\"${NC}"
             ;;
         "branch-delete")
             echo -e "${BLUE}./git-automation. branch $target $(git rev-parse --abbrev-ref HEAD)${NC}"
@@ -70,9 +70,9 @@ provide_rollback_hint() {
                 echo -e "${BLUE}./git-automation. tag $target \"Restored deleted tag\" $tag_commit${NC}"
             fi
             ;;
-        "pu")
+        "push")
             echo -e "${BLUE}./git-automation. rollback HEAD~1 \"Undo: $message\"${NC}"
-            echo -e "${BLUE}./git-automation. force-pu \"Revert pued changes\"${NC}"
+            echo -e "${BLUE}./git-automation. force-push \"Revert pushed changes\"${NC}"
             ;;
         "rollback")
             local current_commit=$(git rev-parse HEAD)
@@ -102,7 +102,7 @@ select_branch() {
             echo -e "  ${i}) $branch"
         fi
         ((i++))
-    done < <(git branch --format='%(refname:ort)' | sort)
+    done < <(git branch --format='%(refname:short)' | sort)
     
     if [ ${#branches[@]} -eq 0 ]; then
         echo -e "${RED}No branches found${NC}"
@@ -121,7 +121,7 @@ select_branch() {
         echo "${branches[$selection-1]}"
         return 0
     else
-        if git ow-ref --verify --quiet refs/heads/"$selection"; then
+        if git show-ref --verify --quiet refs/heads/"$selection"; then
             echo "$selection"
             return 0
         else
@@ -238,74 +238,74 @@ git_commit() {
     fi
 }
 
-git_pu() {
+git_push() {
     local message="$1"
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
     
     if [ -n "$(git status --porcelain)" ]; then
-        echo -e "${YELLOW}The following files will be committed and pued:${NC}"
+        echo -e "${YELLOW}The following files will be committed and pushed:${NC}"
         git status --porcelain
         
         if [ -z "$message" ]; then
-            read -p "Enter commit message [Auto-commit before pu]: " message
+            read -p "Enter commit message [Auto-commit before push]: " message
             if [ -z "$message" ]; then
-                message="Auto-commit before pu on $(date)"
+                message="Auto-commit before push on $(date)"
             fi
         fi
         
-        confirm_changes "commit and pu these changes" "Message: $message" || exit 0
+        confirm_changes "commit and push these changes" "Message: $message" || exit 0
         
         echo -e "${YELLOW}Committing with message: $message${NC}"
         git add .
         git commit -m "$message"
         
         if [ $? -ne 0 ]; then
-            echo -e "${RED}Error: Failed to auto-commit before pu${NC}"
+            echo -e "${RED}Error: Failed to auto-commit before push${NC}"
             exit 1
         fi
         echo -e "${GREEN}Successfully committed changes${NC}"
     else
-        echo -e "${YELLOW}No changes to commit. Puing branch '$current_branch'${NC}"
+        echo -e "${YELLOW}No changes to commit. Pushing branch '$current_branch'${NC}"
     fi
     
-    echo -e "${YELLOW}Commits that will be pued:${NC}"
-    git log @{u}..HEAD --oneline 2>/dev/null || echo -e "${YELLOW}This appears to be the first pu for this branch${NC}"
+    echo -e "${YELLOW}Commits that will be pushed:${NC}"
+    git log @{u}..HEAD --oneline 2>/dev/null || echo -e "${YELLOW}This appears to be the first push for this branch${NC}"
     
-    confirm_changes "pu to $GITHUB_REPO_URL" "Branch: $current_branch" || exit 0
+    confirm_changes "push to $GITHUB_REPO_URL" "Branch: $current_branch" || exit 0
     
-    echo -e "${YELLOW}Puing branch '$current_branch' to $GITHUB_REPO_URL...${NC}"
+    echo -e "${YELLOW}Pushing branch '$current_branch' to $GITHUB_REPO_URL...${NC}"
     echo -e "${YELLOW}If prompted, enter your GitHub credentials${NC}"
     
     git push origin $current_branch
     
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}Successfully pued to remote${NC}"
-        provide_rollback_hint "pu" "" "$message"
+        echo -e "${GREEN}Successfully pushed to remote${NC}"
+        provide_rollback_hint "push" "" "$message"
     else
-        echo -e "${RED}Error: Failed to pu to remote${NC}"
+        echo -e "${RED}Error: Failed to push to remote${NC}"
         echo -e "${YELLOW}Possible solutions:${NC}"
         echo -e "1. Run './git-automation. auth' to set up credentials"
-        echo -e "2. If you need to overwrite remote changes: './git-automation. force-pu'"
-        echo -e "3. If this is your first pu: git pu -u origin $current_branch"
+        echo -e "2. If you need to overwrite remote changes: './git-automation. force-push'"
+        echo -e "3. If this is your first push: git push -u origin $current_branch"
         exit 1
     fi
 }
 
-git_force_pu() {
+git_force_push() {
     local message="$1"
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
     
-    echo -e "${YELLOW}Commits that will force-pued (overwriting remote history):${NC}"
-    git log @{u}..HEAD --oneline 2>/dev/null || echo -e "${YELLOW}This appears to be the first pu for this branch${NC}"
+    echo -e "${YELLOW}Commits that will be force-pushed (overwriting remote history):${NC}"
+    git log @{u}..HEAD --oneline 2>/dev/null || echo -e "${YELLOW}This appears to be the first push for this branch${NC}"
     
-    echo -e "${RED}WARNING: Force pu will overwrite remote repository history!${NC}"
+    echo -e "${RED}WARNING: Force push will overwrite remote repository history!${NC}"
     echo -e "${RED}This can cause data loss if others have pulled these changes.${NC}"
     
-    confirm_changes "FORCE PU to $GITHUB_REPO_URL" "Branch: $current_branch" || exit 0
+    confirm_changes "FORCE push to $GITHUB_REPO_URL" "Branch: $current_branch" || exit 0
     
     if [ -n "$(git status --porcelain)" ]; then
         if [ -z "$message" ]; then
-            message="Auto-commit before force pu on $(date)"
+            message="Auto-commit before force push on $(date)"
         fi
         
         echo -e "${YELLOW}Uncommitted changes detected, committing first...${NC}"
@@ -315,14 +315,14 @@ git_force_pu() {
     
     local current_commit=$(git rev-parse HEAD)
     
-    echo -e "${YELLOW}Force puing branch '$current_branch' to remote...${NC}"
-    git pu --force origin $current_branch
+    echo -e "${YELLOW}Force pushing branch '$current_branch' to remote...${NC}"
+    git push --force origin $current_branch
     
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}Successfully force pued to remote${NC}"
-        echo -e "${YELLOW}If you need to undo this force pu, you might need to contact repository administrators.${NC}"
+        echo -e "${GREEN}Successfully force pushed to remote${NC}"
+        echo -e "${YELLOW}If you need to undo this force push, you might need to contact repository administrators.${NC}"
     else
-        echo -e "${RED}Error: Force pu failed${NC}"
+        echo -e "${RED}Error: Force push failed${NC}"
         echo -e "${YELLOW}Try running './git-automation. auth' first${NC}"
         exit 1
     fi
@@ -375,7 +375,7 @@ git_checkout() {
     
     if [ -n "$(git status --porcelain)" ]; then
         echo -e "${YELLOW}Uncommitted changes detected. Options:${NC}"
-        echo "1) Sta changes"
+        echo "1) Stash changes"
         echo "2) Keep working (might cause conflicts)"
         echo "3) Cancel checkout"
         
@@ -383,8 +383,8 @@ git_checkout() {
         
         case $option in
             1)
-                git sta pu -m "Auto-sta before checkout to $branch"
-                echo -e "${YELLOW}Changes staed. Use 'git sta pop' to recover them later.${NC}"
+                git stash push -m "Auto-stash before checkout to $branch"
+                echo -e "${YELLOW}Changes stashed. Use 'git stash pop' to recover them later.${NC}"
                 ;;
             2)
                 echo -e "${YELLOW}Keeping changes. Checkout will fail if there are conflicts.${NC}"
@@ -477,7 +477,7 @@ git_rollback() {
                 exit 1
             fi
             
-            echo -e "${YELLOW}Warning: This was a hard reset. Use 'git pu --force' if you need to update remote.${NC}"
+            echo -e "${YELLOW}Warning: This was a hard reset. Use 'git push --force' if you need to update remote.${NC}"
         else
             echo -e "${RED}Error: Failed to rollback to commit $target${NC}"
             exit 1
@@ -554,7 +554,7 @@ git_auth() {
         echo -e "${GREEN}Authentication successful. Credentials cached.${NC}"
     else
         echo -e "${RED}Authentication failed.${NC}"
-        echo "If you're using 2FA, you ould create a personal access token and use it as your password."
+        echo "If you're using 2FA, you should create a personal access token and use it as your password."
         echo "Visit: https://github.com/settings/tokens to create a token."
         exit 1
     fi
@@ -619,11 +619,11 @@ case "$1" in
     "commit")
         git_commit "$2" "$3"
         ;;
-    "pu")
-        git_pu "$2"
+    "push")
+        git_push "$2"
         ;;
-    "force-pu")
-        git_force_pu "$2"
+    "force-push")
+        git_force_push "$2"
         ;;
     "branch")
         git_branch "$2" "$3"
