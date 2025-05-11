@@ -276,7 +276,7 @@ git_pu() {
     echo -e "${YELLOW}Puing branch '$current_branch' to $GITHUB_REPO_URL...${NC}"
     echo -e "${YELLOW}If prompted, enter your GitHub credentials${NC}"
     
-    git pu origin $current_branch
+    git push origin $current_branch
     
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}Successfully pued to remote${NC}"
