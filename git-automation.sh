@@ -1,10 +1,10 @@
-#!/bin/ba
+#!/bin/bash
 # filepath: /home/paulo-yapper/Documents/Documentacao Dev/Portfolio/git-automation.
 
 # Configuration
 GITHUB_USERNAME="paulocymbaum"
 REPO_PATH=$(pwd)
-GITHUB_REPO_URL="https://github.com/paulocymbaum/portfolio.git"
+GITHUB_REPO_URL="https://github.com/paulocymbaum/Projects.git"
 
 # Store previous repositories for easy switching
 REPO_HISTORY_FILE="$HOME/.git_automation_repo_history"
